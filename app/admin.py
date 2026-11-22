@@ -42,6 +42,7 @@ class HorarioInline(admin.TabularInline):
 class ReservaInline(admin.TabularInline):
     model = Reserva
     extra = 0
+    readonly_fields = ("valor_total",)
 
 
 # Pagamentos relacionados a uma reserva
@@ -155,6 +156,7 @@ class ReservaAdmin(admin.ModelAdmin):
     )
     search_fields = ("cliente__nome", "quadra__nome")
     list_filter = ("status", "quadra")
+    readonly_fields = ("valor_total",)
     inlines = [PagamentoInline, AvaliacaoInline]
 
 

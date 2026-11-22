@@ -2,7 +2,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
+from decimal import Decimal, ROUND_HALF_UP
 
 # CIDADES
 class Cidade(models.Model):
@@ -233,9 +233,23 @@ class Reserva(models.Model):
                     "Já existe uma reserva para essa quadra neste horário."
                 )
 
+            
+    def save(self, *args, **kwargs):
+        duracao = self.data_hora_fim - self.data_hora_inicio
+
+        horas = Decimal(str(duracao.total_seconds())) / Decimal("3600")
+
+        self.valor_total = (
+            horas * self.quadra.valor_hora
+        ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.quadra} - {self.data_hora_inicio:%d/%m/%Y %H:%M}"
 
+
+    
 
 # PAGAMENTOS
 class Pagamento(models.Model):
