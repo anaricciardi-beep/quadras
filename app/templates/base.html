@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}ArenaSport{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f3f6f4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar, footer {
+            background-color: #10291e;
+        }
+
+        .navbar-brand {
+            color: #b7ef43 !important;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .navbar .nav-link {
+            color: white !important;
+        }
+
+        .navbar .nav-link:hover {
+            color: #b7ef43 !important;
+        }
+
+        main {
+            flex: 1;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark navbar-expand-lg">
+
+        <a class="navbar-brand" href="{% url 'index' %}">
+            ArenaSport
+        </a>
+
+        <div class="navbar-nav flex-wrap">
+
+            <a class="nav-link" href="{% url 'index' %}">Início</a>
+            <a class="nav-link" href="{% url 'cidades' %}">Cidades</a>
+            <a class="nav-link" href="{% url 'complexos' %}">Complexos</a>
+            <a class="nav-link" href="{% url 'modalidades' %}">Modalidades</a>
+            <a class="nav-link" href="{% url 'quadras' %}">Quadras</a>
+            <a class="nav-link" href="{% url 'horarios' %}">Horários</a>
+
+            {% if user.is_authenticated and user.is_active and user.is_staff %}
+
+                <a class="nav-link" href="{% url 'pessoas' %}">Pessoas</a>
+                <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
+                <a class="nav-link" href="{% url 'gestores' %}">Gestores</a>
+                <a class="nav-link" href="{% url 'reservas' %}">Reservas</a>
+                <a class="nav-link" href="{% url 'pagamentos' %}">Pagamentos</a>
+                <a class="nav-link" href="{% url 'avaliacoes' %}">Avaliações</a>
+
+            {% endif %}
+
+            <a class="nav-link" href="{% url 'admin:index' %}">
+                Administração
+            </a>
+
+        </div>
+
+    </nav>
+
+    <main class="container mt-5 mb-5">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <footer class="text-white text-center p-4">
+
+        ArenaSport | Sistema de Reserva de Quadras Esportivas
+
+    </footer>
+
+</body>
+
+</html>
