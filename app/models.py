@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from decimal import Decimal, ROUND_HALF_UP
+from django.conf import settings
 
 # CIDADES
 class Cidade(models.Model):
@@ -60,6 +61,14 @@ class ComplexoEsportivo(models.Model):
 
 # GERENCIAR CLIENTES (HERANÇA)
 class Cliente(Pessoa):
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="cliente",
+        null=True,
+        blank=True,
+        verbose_name="Usuário do sistema"
+    )
     data_cadastro = models.DateField(auto_now_add=True)
     ativo = models.BooleanField(default=True)
 
