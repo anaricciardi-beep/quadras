@@ -4,6 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from decimal import Decimal, ROUND_HALF_UP
 from django.conf import settings
+from django.utils import timezone
 
 # CIDADES
 class Cidade(models.Model):
