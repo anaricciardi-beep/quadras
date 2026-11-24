@@ -10,7 +10,8 @@ urlpatterns = [
 
     # Página inicial
     path('', IndexView.as_view(), name='index'),
-    
+
+    path('cadastro/', cadastro, name='cadastro'),
     path('cidades/', CidadesView.as_view(), name='cidades'),
     path('complexos/', ComplexosView.as_view(), name='complexos'),
     path('modalidades/', ModalidadesView.as_view(), name='modalidades'),
