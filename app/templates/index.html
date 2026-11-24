@@ -1,56 +1,90 @@
 
 {% extends 'base.html' %}
 
-{% block title %}Início | Quadras Esportivas{% endblock %}
+{% block title %}Painel | Gerenciamento de Quadras{% endblock %}
 
 {% block content %}
 
-<!-- Página inicial -->
+<!-- Painel principal -->
 <div class="jumbotron text-center bg-white shadow-sm">
 
-    <h1 class="display-4 text-success">
-        Quadras Esportivas
+    <h1 class="display-4" style="color: #10291e;">
+        Gerenciamento de Quadras Esportivas
     </h1>
 
     <p class="lead">
-        Bem-vindo ao Sistema de Reserva de Quadras Esportivas!
+        Bem-vindo ao Painel Administrativo!
     </p>
 
     <hr>
 
     <p>
-        Consulte quadras, modalidades, horários
-        e gerencie suas reservas.
+        Gerencie clientes, quadras, horários e reservas
+        do seu complexo esportivo.
     </p>
 
     <!-- Botões principais -->
     <div class="mt-4">
 
-        <a href="{% url 'quadras' %}"
-           class="btn btn-success btn-lg m-1">
-            Consultar quadras
+        <a href="{% url 'reservar' %}"
+           class="btn btn-lg m-1 text-white"
+           style="background-color: #10291e;">
+            Nova reserva
         </a>
 
-        <a href="{% url 'cadastro' %}"
+        <a href="{% url 'reservas' %}"
            class="btn btn-outline-success btn-lg m-1">
-            Criar minha conta
+            Consultar reservas
         </a>
 
     </div>
 
 </div>
 
-<!-- Cartões -->
+<!-- Cartões de gerenciamento -->
 <div class="row text-center">
 
-    <div class="col-md-4 mb-3">
+    <!-- Clientes -->
+    <div class="col-md-4 mb-4">
         <div class="card shadow-sm h-100">
             <div class="card-body">
 
-                <h4 class="text-success">Quadras</h4>
+                <h4 style="color: #10291e;">
+                    Clientes
+                </h4>
 
                 <p>
-                    Conheça nossos espaços esportivos.
+                    Cadastre e consulte os clientes
+                    do complexo esportivo.
+                </p>
+
+                <a href="{% url 'clientes' %}"
+                   class="btn btn-outline-success m-1">
+                    Gerenciar clientes
+                </a>
+
+                <a href="{% url 'cadastrar_cliente' %}"
+                   class="btn text-white m-1"
+                   style="background-color: #10291e;">
+                    + Novo cliente
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Quadras -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 style="color: #10291e;">
+                    Quadras
+                </h4>
+
+                <p>
+                    Consulte as quadras e suas
+                    informações.
                 </p>
 
                 <a href="{% url 'quadras' %}"
@@ -62,14 +96,47 @@
         </div>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <!-- Reservas -->
+    <div class="col-md-4 mb-4">
         <div class="card shadow-sm h-100">
             <div class="card-body">
 
-                <h4 class="text-success">Reservas</h4>
+                <h4 style="color: #10291e;">
+                    Reservas
+                </h4>
 
                 <p>
-                    Organize seus horários e atividades.
+                    Consulte as reservas cadastradas
+                    e suas situações.
+                </p>
+
+                <a href="{% url 'reservas' %}"
+                   class="btn btn-outline-success m-1">
+                    Gerenciar reservas
+                </a>
+
+                <a href="{% url 'reservar' %}"
+                   class="btn text-white m-1"
+                   style="background-color: #10291e;">
+                    + Nova reserva
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Horários -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 style="color: #10291e;">
+                    Horários
+                </h4>
+
+                <p>
+                    Consulte os horários de
+                    funcionamento das quadras.
                 </p>
 
                 <a href="{% url 'horarios' %}"
@@ -81,14 +148,41 @@
         </div>
     </div>
 
-    <div class="col-md-4 mb-3">
+    <!-- Complexos esportivos -->
+    <div class="col-md-4 mb-4">
         <div class="card shadow-sm h-100">
             <div class="card-body">
 
-                <h4 class="text-success">Modalidades</h4>
+                <h4 style="color: #10291e;">
+                    Complexos
+                </h4>
 
                 <p>
-                    Encontre seu esporte favorito.
+                    Consulte os complexos esportivos
+                    cadastrados no sistema.
+                </p>
+
+                <a href="{% url 'complexos' %}"
+                   class="btn btn-outline-success">
+                    Ver complexos
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modalidades -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 style="color: #10291e;">
+                    Modalidades
+                </h4>
+
+                <p>
+                    Consulte as modalidades
+                    esportivas disponíveis.
                 </p>
 
                 <a href="{% url 'modalidades' %}"

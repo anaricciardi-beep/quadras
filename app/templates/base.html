@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}Quadras Esportivas{% endblock %}</title>
+    <title>{% block title %}Gerenciamento de Quadras{% endblock %}</title>
 
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -21,21 +21,30 @@
         /* Menu superior */
         .navbar {
             background-color: #10291e !important;
+            padding: 18px 25px;
         }
 
         .navbar-brand {
             color: white !important;
-            font-size: 24px;
+            font-size: 23px;
             font-weight: bold;
+            margin-right: 25px;
         }
 
         .navbar .nav-link {
             color: white !important;
-            margin-right: 10px;
+            margin-right: 12px;
+            font-size: 15px;
         }
 
         .navbar .nav-link:hover {
             color: #d7e8dc !important;
+        }
+
+        .menu-links {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         /* Títulos verdes */
@@ -78,6 +87,19 @@
         a:hover {
             color: #1d4936;
         }
+
+        /* Ajustes para telas pequenas */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .navbar .nav-link {
+                font-size: 14px;
+                padding: 7px;
+            }
+        }
     </style>
 
 </head>
@@ -85,69 +107,55 @@
 <body>
 
     <!-- Menu superior -->
-    <nav class="navbar navbar-dark navbar-expand-lg">
+    <nav class="navbar navbar-dark d-flex flex-wrap align-items-center">
 
         <a class="navbar-brand" href="{% url 'index' %}">
             Quadras Esportivas
         </a>
 
-        <div class="navbar-nav flex-wrap">
+        <div class="menu-links">
 
             <a class="nav-link" href="{% url 'index' %}">
                 Início
             </a>
 
-            <a class="nav-link" href="{% url 'cidades' %}">
-                Cidades
-            </a>
-
-            <a class="nav-link" href="{% url 'complexos' %}">
-                Complexos
-            </a>
-
-            <a class="nav-link" href="{% url 'modalidades' %}">
-                Modalidades
-            </a>
-
-            <a class="nav-link" href="{% url 'quadras' %}">
-                Quadras
-            </a>
-
-            <a class="nav-link" href="{% url 'horarios' %}">
-                Horários
-            </a>
-
             {% if user.is_authenticated and user.is_active and user.is_staff %}
-
-                <a class="nav-link" href="{% url 'pessoas' %}">
-                    Pessoas
-                </a>
 
                 <a class="nav-link" href="{% url 'clientes' %}">
                     Clientes
-                </a>
-
-                <a class="nav-link" href="{% url 'gestores' %}">
-                    Gestores
                 </a>
 
                 <a class="nav-link" href="{% url 'reservas' %}">
                     Reservas
                 </a>
 
-                <a class="nav-link" href="{% url 'pagamentos' %}">
-                    Pagamentos
+                <a class="nav-link" href="{% url 'quadras' %}">
+                    Quadras
                 </a>
 
-                <a class="nav-link" href="{% url 'avaliacoes' %}">
-                    Avaliações
+                <a class="nav-link" href="{% url 'horarios' %}">
+                    Horários
+                </a>
+
+                <a class="nav-link" href="{% url 'complexos' %}">
+                    Complexos
+                </a>
+
+                <a class="nav-link" href="{% url 'modalidades' %}">
+                    Modalidades
+                </a>
+
+                <a class="nav-link" href="{% url 'admin:index' %}">
+                    Administração
+                </a>
+
+            {% else %}
+
+                <a class="nav-link" href="{% url 'admin:login' %}">
+                    Entrar
                 </a>
 
             {% endif %}
-
-            <a class="nav-link" href="{% url 'admin:index' %}">
-                Administração
-            </a>
 
         </div>
 
@@ -162,4 +170,5 @@
     </main>
 
 </body>
+
 </html>
