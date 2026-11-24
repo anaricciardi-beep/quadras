@@ -1,86 +1,105 @@
 
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
 
-    <title>Quadras Esportivas</title>
+{% block title %}Início | Quadras Esportivas{% endblock %}
 
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
+{% block content %}
 
-<body class="bg-light">
+<!-- Página inicial -->
+<div class="jumbotron text-center bg-white shadow-sm">
 
-    <!-- Menu de navegação -->
-    <nav class="navbar navbar-dark bg-success">
-        <a class="navbar-brand" href="/">Quadras Esportivas</a>
+    <h1 class="display-4 text-success">
+        Quadras Esportivas
+    </h1>
 
-        <div class="navbar-nav flex-row">
-            <a class="nav-link text-white mr-3" href="/">Início</a>
-            <a class="nav-link text-white" href="/admin/">Administração</a>
-        </div>
-    </nav>
+    <p class="lead">
+        Bem-vindo ao Sistema de Reserva de Quadras Esportivas!
+    </p>
 
-    <!-- Página inicial -->
-    <div class="container mt-5">
+    <hr>
 
-        <div class="jumbotron text-center bg-white shadow-sm">
-            <h1 class="display-4 text-success">
-                Quadras Esportivas
-            </h1>
+    <p>
+        Consulte quadras, modalidades, horários
+        e gerencie suas reservas.
+    </p>
 
-            <p class="lead">
-                Bem-vindo ao Sistema de Reserva de Quadras Esportivas!
-            </p>
+    <!-- Botões principais -->
+    <div class="mt-4">
 
-            <hr>
+        <a href="{% url 'quadras' %}"
+           class="btn btn-success btn-lg m-1">
+            Consultar quadras
+        </a>
 
-            <p>
-                Consulte quadras, modalidades, horários e gerencie suas reservas.
-            </p>
+        <a href="{% url 'cadastro' %}"
+           class="btn btn-outline-success btn-lg m-1">
+            Criar minha conta
+        </a>
 
-            <a href="/admin/" class="btn btn-success btn-lg">
-                Acessar sistema
-            </a>
-        </div>
+    </div>
 
-        <div class="row text-center">
+</div>
 
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h4>Quadras</h4>
-                        <p>Conheça nossos espaços esportivos.</p>
-                    </div>
-                </div>
+<!-- Cartões -->
+<div class="row text-center">
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 class="text-success">Quadras</h4>
+
+                <p>
+                    Conheça nossos espaços esportivos.
+                </p>
+
+                <a href="{% url 'quadras' %}"
+                   class="btn btn-outline-success">
+                    Ver quadras
+                </a>
+
             </div>
-
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h4>Reservas</h4>
-                        <p>Organize seus horários e atividades.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h4>Modalidades</h4>
-                        <p>Encontre seu esporte favorito.</p>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <footer class="bg-success text-white text-center p-3 mt-5">
-        Sistema de Reserva de Quadras Esportivas
-    </footer>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
 
-</body>
-</html>
+                <h4 class="text-success">Reservas</h4>
+
+                <p>
+                    Organize seus horários e atividades.
+                </p>
+
+                <a href="{% url 'horarios' %}"
+                   class="btn btn-outline-success">
+                    Ver horários
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 class="text-success">Modalidades</h4>
+
+                <p>
+                    Encontre seu esporte favorito.
+                </p>
+
+                <a href="{% url 'modalidades' %}"
+                   class="btn btn-outline-success">
+                    Ver modalidades
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
