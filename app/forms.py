@@ -4,8 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import transaction
 
-from .models import Cidade, Pessoa, Cliente
-
+from .models import Cidade, Pessoa, Cliente, Reserva, Quadra  
 
 class CadastroForm(UserCreationForm):
 
@@ -127,3 +126,76 @@ class CadastroForm(UserCreationForm):
             )
 
         return usuario
+
+
+# Formulário para realizar reservas pelo site
+class ReservaForm(forms.ModelForm):
+
+    data_hora_inicio = forms.DateTimeField(
+        label="Data e hora de início",
+        input_formats=["%Y-%m-%dT%H:%M"],
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={
+                "type": "datetime-local",
+                "class": "form-control"
+            }
+        )
+    )
+
+    data_hora_fim = forms.DateTimeField(
+        label="Data e hora de término",
+        input_formats=["%Y-%m-%dT%H:%M"],
+        widget=forms.DateTimeInput(
+            format="%Y-%m-%dT%H:%M",
+            attrs={
+                "type": "datetime-local",
+                "class": "form-control"
+            }
+        )
+    )
+
+    class Meta:
+        model = Reserva
+
+        fields = [
+            "quadra",
+            "data_hora_inicio",
+            "data_hora_fim"
+        ]
+
+        widgets = {
+            "quadra": forms.Select(
+                attrs={"class": "form-control"}
+            )
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Mostrar somente quadras ativas
+        self.fields["quadra"].queryset = (
+            Quadra.objects.filter(ativa=True)
+        )
+
+    def clean(self):
+        dados = super().clean()
+
+        inicio = dados.get("data_hora_inicio")
+        fim = dados.get("data_hora_fim")
+
+        if inicio and fim:
+
+            if inicio <= timezone.now():
+                self.add_error(
+                    "data_hora_inicio",
+                    "Escolha uma data e hora futuras."
+                )
+
+            if fim <= inicio:
+                self.add_error(
+                    "data_hora_fim",
+                    "O horário final deve ser maior que o inicial."
+                )
+
+        return dados
