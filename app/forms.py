@@ -23,12 +23,15 @@ class CadastroForm(UserCreationForm):
 
     data_nasc = forms.DateField(
         label="Data de nascimento",
-        widget=forms.DateInput(attrs={"type": "date"}),
+        widget=forms.DateInput(
+            attrs={"type": "date"}
+        ),
         required=True
     )
 
     email = forms.EmailField(
         label="E-mail",
+        max_length=150,
         required=True
     )
 
@@ -48,7 +51,6 @@ class CadastroForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = (
-            "username",
             "nome",
             "cpf",
             "data_nasc",
@@ -57,18 +59,21 @@ class CadastroForm(UserCreationForm):
             "cidade"
         )
 
-    # Verifica se o e-mail já foi utilizado
+    # Verifica se o e-mail já está cadastrado
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
 
-        if User.objects.filter(email__iexact=email).exists():
+        if (
+            User.objects.filter(email__iexact=email).exists()
+            or User.objects.filter(username__iexact=email).exists()
+        ):
             raise forms.ValidationError(
                 "Este e-mail já está cadastrado."
             )
 
         return email
 
-    # Verifica o formato e a duplicidade do CPF
+    # Verifica o CPF
     def clean_cpf(self):
         cpf = self.cleaned_data["cpf"]
 
@@ -96,10 +101,14 @@ class CadastroForm(UserCreationForm):
 
         return cpf_formatado
 
-    # Cria o usuário e o cliente no banco de dados
+    # Cria usuário e cliente no banco de dados
     @transaction.atomic
     def save(self, commit=True):
+
         usuario = super().save(commit=False)
+
+        # O e-mail será usado internamente como username
+        usuario.username = self.cleaned_data["email"]
 
         usuario.first_name = self.cleaned_data["nome"]
         usuario.email = self.cleaned_data["email"]
