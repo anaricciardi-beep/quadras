@@ -1,0 +1,203 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Gerenciar Reservas | Quadras Esportivas{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-sm border-0">
+
+    <!-- Cabeçalho -->
+    <div class="card-header text-white"
+         style="background-color: #10291e;">
+
+        <h3 class="mb-0">
+            Gerenciar Reservas
+        </h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <p class="text-muted">
+            Consulte, confirme ou cancele as reservas
+            cadastradas no sistema.
+        </p>
+
+        <!-- Mensagens -->
+        {% if messages %}
+            {% for message in messages %}
+
+                {% if message.tags == "error" %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% else %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endif %}
+
+            {% endfor %}
+        {% endif %}
+
+        <!-- Nova reserva -->
+        <a href="{% url 'reservar' %}"
+           class="btn text-white mb-4"
+           style="background-color: #10291e;">
+
+            + Nova Reserva
+
+        </a>
+
+        <!-- Tabela -->
+        <div class="table-responsive">
+
+            <table class="table table-striped table-bordered">
+
+                <thead style="background-color: #e9f1ec;">
+                    <tr>
+                        <th>Nº</th>
+                        <th>Cliente</th>
+                        <th>Quadra</th>
+                        <th>Complexo</th>
+                        <th>Início</th>
+                        <th>Término</th>
+                        <th>Valor</th>
+                        <th>Situação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for reserva in reservas %}
+
+                    <tr>
+
+                        <td>
+                            {{ reserva.id }}
+                        </td>
+
+                        <td>
+                            {{ reserva.cliente.nome }}
+                        </td>
+
+                        <td>
+                            {{ reserva.quadra.nome }}
+                        </td>
+
+                        <td>
+                            {{ reserva.quadra.complexo_esportivo.nome }}
+                        </td>
+
+                        <td>
+                            {{ reserva.data_hora_inicio|date:"d/m/Y H:i" }}
+                        </td>
+
+                        <td>
+                            {{ reserva.data_hora_fim|date:"d/m/Y H:i" }}
+                        </td>
+
+                        <td>
+                            R$ {{ reserva.valor_total|floatformat:2 }}
+                        </td>
+
+                        <!-- Situação -->
+                        <td>
+
+                            {% if reserva.status == "confirmada" %}
+
+                                <span class="badge badge-success">
+                                    Confirmada
+                                </span>
+
+                            {% elif reserva.status == "pendente" %}
+
+                                <span class="badge badge-warning">
+                                    Pendente
+                                </span>
+
+                            {% elif reserva.status == "cancelada" %}
+
+                                <span class="badge badge-danger">
+                                    Cancelada
+                                </span>
+
+                            {% else %}
+
+                                {{ reserva.get_status_display }}
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- Botões -->
+                        <td>
+
+                            {% if reserva.status != "confirmada" %}
+
+                                <form method="POST"
+                                      action="{% url 'alterar_status_reserva' reserva.id 'confirmar' %}"
+                                      class="mb-2">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-success btn-sm btn-block">
+                                        Confirmar
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                            {% if reserva.status != "cancelada" %}
+
+                                <form method="POST"
+                                      action="{% url 'alterar_status_reserva' reserva.id 'cancelar' %}"
+                                      onsubmit="return confirm('Deseja realmente cancelar esta reserva?');">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm btn-block">
+                                        Cancelar
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            Nenhuma reserva cadastrada.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <a href="{% url 'index' %}"
+           class="btn btn-outline-secondary mt-3">
+
+            Voltar ao Painel
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
