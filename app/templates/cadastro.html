@@ -6,9 +6,9 @@
 {% block content %}
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-7">
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm border-0">
             <div class="card-body p-4">
 
                 <h2 class="text-success text-center">
@@ -16,9 +16,35 @@
                 </h2>
 
                 <p class="text-muted text-center">
-                    Cadastre-se para utilizar nosso sistema.
+                    Preencha seus dados para se cadastrar.
                 </p>
 
+                <!-- Mostrar erros do cadastro -->
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>
+                        Não foi possível concluir o cadastro.
+                    </strong>
+
+                    <p>Corrija os seguintes problemas:</p>
+
+                    <ul>
+                        {% for field in form %}
+                            {% for erro in field.errors %}
+                                <li>
+                                    {{ field.label }}: {{ erro }}
+                                </li>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {% for erro in form.non_field_errors %}
+                            <li>{{ erro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Formulário -->
                 <form method="POST">
                     {% csrf_token %}
 
