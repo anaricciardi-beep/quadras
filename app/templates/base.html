@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}ArenaSport{% endblock %}</title>
+    <title>{% block title %}Quadras Esportivas{% endblock %}</title>
 
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -15,30 +15,68 @@
         body {
             background-color: #f3f6f4;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: Arial, sans-serif;
         }
 
-        .navbar, footer {
-            background-color: #10291e;
+        /* Menu superior */
+        .navbar {
+            background-color: #10291e !important;
         }
 
         .navbar-brand {
-            color: #b7ef43 !important;
-            font-size: 25px;
+            color: white !important;
+            font-size: 24px;
             font-weight: bold;
         }
 
         .navbar .nav-link {
             color: white !important;
+            margin-right: 10px;
         }
 
         .navbar .nav-link:hover {
-            color: #b7ef43 !important;
+            color: #d7e8dc !important;
         }
 
-        main {
-            flex: 1;
+        /* Títulos verdes */
+        .text-success {
+            color: #10291e !important;
+        }
+
+        /* Botões principais */
+        .btn-success {
+            background-color: #10291e !important;
+            border-color: #10291e !important;
+        }
+
+        .btn-success:hover {
+            background-color: #1d4936 !important;
+            border-color: #1d4936 !important;
+        }
+
+        /* Botões com borda */
+        .btn-outline-success {
+            color: #10291e !important;
+            border-color: #10291e !important;
+        }
+
+        .btn-outline-success:hover {
+            background-color: #10291e !important;
+            color: white !important;
+        }
+
+        /* Cartões */
+        .card {
+            border-radius: 8px;
+        }
+
+        /* Links comuns */
+        a {
+            color: #10291e;
+        }
+
+        a:hover {
+            color: #1d4936;
         }
     </style>
 
@@ -46,29 +84,64 @@
 
 <body>
 
+    <!-- Menu superior -->
     <nav class="navbar navbar-dark navbar-expand-lg">
 
         <a class="navbar-brand" href="{% url 'index' %}">
-            ArenaSport
+            Quadras Esportivas
         </a>
 
         <div class="navbar-nav flex-wrap">
 
-            <a class="nav-link" href="{% url 'index' %}">Início</a>
-            <a class="nav-link" href="{% url 'cidades' %}">Cidades</a>
-            <a class="nav-link" href="{% url 'complexos' %}">Complexos</a>
-            <a class="nav-link" href="{% url 'modalidades' %}">Modalidades</a>
-            <a class="nav-link" href="{% url 'quadras' %}">Quadras</a>
-            <a class="nav-link" href="{% url 'horarios' %}">Horários</a>
+            <a class="nav-link" href="{% url 'index' %}">
+                Início
+            </a>
+
+            <a class="nav-link" href="{% url 'cidades' %}">
+                Cidades
+            </a>
+
+            <a class="nav-link" href="{% url 'complexos' %}">
+                Complexos
+            </a>
+
+            <a class="nav-link" href="{% url 'modalidades' %}">
+                Modalidades
+            </a>
+
+            <a class="nav-link" href="{% url 'quadras' %}">
+                Quadras
+            </a>
+
+            <a class="nav-link" href="{% url 'horarios' %}">
+                Horários
+            </a>
 
             {% if user.is_authenticated and user.is_active and user.is_staff %}
 
-                <a class="nav-link" href="{% url 'pessoas' %}">Pessoas</a>
-                <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
-                <a class="nav-link" href="{% url 'gestores' %}">Gestores</a>
-                <a class="nav-link" href="{% url 'reservas' %}">Reservas</a>
-                <a class="nav-link" href="{% url 'pagamentos' %}">Pagamentos</a>
-                <a class="nav-link" href="{% url 'avaliacoes' %}">Avaliações</a>
+                <a class="nav-link" href="{% url 'pessoas' %}">
+                    Pessoas
+                </a>
+
+                <a class="nav-link" href="{% url 'clientes' %}">
+                    Clientes
+                </a>
+
+                <a class="nav-link" href="{% url 'gestores' %}">
+                    Gestores
+                </a>
+
+                <a class="nav-link" href="{% url 'reservas' %}">
+                    Reservas
+                </a>
+
+                <a class="nav-link" href="{% url 'pagamentos' %}">
+                    Pagamentos
+                </a>
+
+                <a class="nav-link" href="{% url 'avaliacoes' %}">
+                    Avaliações
+                </a>
 
             {% endif %}
 
@@ -80,6 +153,7 @@
 
     </nav>
 
+    <!-- Conteúdo principal -->
     <main class="container mt-5 mb-5">
 
         {% block content %}
@@ -87,12 +161,5 @@
 
     </main>
 
-    <footer class="text-white text-center p-4">
-
-        ArenaSport | Sistema de Reserva de Quadras Esportivas
-
-    </footer>
-
 </body>
-
 </html>
