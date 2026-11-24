@@ -1,0 +1,39 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Cadastro | Quadras Esportivas{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h2 class="text-success text-center">
+                    Criar minha conta
+                </h2>
+
+                <p class="text-muted text-center">
+                    Cadastre-se para utilizar nosso sistema.
+                </p>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit"
+                            class="btn btn-success btn-block">
+                        Cadastrar
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
