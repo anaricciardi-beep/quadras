@@ -2,117 +2,321 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db import transaction
 
 from .models import *
-from .forms import CadastroForm
+from .forms import (
+    CadastroForm,
+    ClienteCadastroForm,
+    ReservaGerenciamentoForm
+)
 
 
-# Página inicial
+# ==========================================
+# PÁGINA INICIAL
+# ==========================================
+
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'index.html')
+        return render(request, "index.html")
 
 
-# Consulta de cidades
+# ==========================================
+# CONSULTAS
+# ==========================================
+
 class CidadesView(View):
     def get(self, request, *args, **kwargs):
-        cidades = Cidade.objects.all()
-        return render(request, 'cidades.html', {'cidades': cidades})
+        cidades = Cidade.objects.all().order_by("nome")
+        return render(request, "cidades.html", {
+            "cidades": cidades
+        })
 
 
-# Consulta de pessoas
 class PessoasView(View):
     def get(self, request, *args, **kwargs):
         pessoas = Pessoa.objects.all()
-        return render(request, 'pessoas.html', {'pessoas': pessoas})
+        return render(request, "pessoas.html", {
+            "pessoas": pessoas
+        })
 
 
-# Consulta de clientes
 class ClientesView(View):
     def get(self, request, *args, **kwargs):
-        clientes = Cliente.objects.all()
-        return render(request, 'clientes.html', {'clientes': clientes})
+        clientes = (
+            Cliente.objects.select_related("cidade")
+            .all()
+            .order_by("nome")
+        )
+
+        return render(request, "clientes.html", {
+            "clientes": clientes
+        })
 
 
-# Consulta de gestores
 class GestoresView(View):
     def get(self, request, *args, **kwargs):
         gestores = Gestor.objects.all()
-        return render(request, 'gestores.html', {'gestores': gestores})
+        return render(request, "gestores.html", {
+            "gestores": gestores
+        })
 
 
-# Consulta de complexos esportivos
 class ComplexosView(View):
     def get(self, request, *args, **kwargs):
         complexos = ComplexoEsportivo.objects.all()
-        return render(request, 'complexos.html', {'complexos': complexos})
+        return render(request, "complexos.html", {
+            "complexos": complexos
+        })
 
 
-# Consulta de modalidades
 class ModalidadesView(View):
     def get(self, request, *args, **kwargs):
         modalidades = Modalidade.objects.all()
-        return render(request, 'modalidades.html', {'modalidades': modalidades})
+        return render(request, "modalidades.html", {
+            "modalidades": modalidades
+        })
 
 
-# Consulta de quadras
 class QuadrasView(View):
     def get(self, request, *args, **kwargs):
-        quadras = Quadra.objects.all()
-        return render(request, 'quadras.html', {'quadras': quadras})
+        quadras = Quadra.objects.all().order_by(
+            "complexo_esportivo__cidade__nome",
+            "complexo_esportivo__nome",
+            "nome"
+        )
+
+        return render(request, "quadras.html", {
+            "quadras": quadras
+        })
 
 
-# Consulta de horários
 class HorariosView(View):
     def get(self, request, *args, **kwargs):
         horarios = HorarioFuncionamento.objects.all()
-        return render(request, 'horarios.html', {'horarios': horarios})
+        return render(request, "horarios.html", {
+            "horarios": horarios
+        })
 
 
-# Consulta de reservas
+# ==========================================
+# CONSULTAR RESERVAS
+# ==========================================
+
 class ReservasView(View):
     def get(self, request, *args, **kwargs):
-        reservas = Reserva.objects.all()
-        return render(request, 'reservas.html', {'reservas': reservas})
+
+        reservas = (
+            Reserva.objects
+            .select_related(
+                "cliente",
+                "quadra",
+                "quadra__complexo_esportivo"
+            )
+            .order_by("-data_hora_inicio")
+        )
+
+        return render(request, "reservas.html", {
+            "reservas": reservas
+        })
 
 
-# Consulta de pagamentos
 class PagamentosView(View):
     def get(self, request, *args, **kwargs):
         pagamentos = Pagamento.objects.all()
-        return render(request, 'pagamentos.html', {'pagamentos': pagamentos})
+        return render(request, "pagamentos.html", {
+            "pagamentos": pagamentos
+        })
 
 
-# Consulta de avaliações
 class AvaliacoesView(View):
     def get(self, request, *args, **kwargs):
         avaliacoes = Avaliacao.objects.all()
-        return render(request, 'avaliacoes.html', {'avaliacoes': avaliacoes})
+        return render(request, "avaliacoes.html", {
+            "avaliacoes": avaliacoes
+        })
 
 
-# Cadastro de novos usuários pelo site
+# ==========================================
+# CADASTRO ANTIGO DE USUÁRIO
+# Mantido para não quebrar a URL existente
+# ==========================================
+
 def cadastro(request):
 
-    # Se o usuário já estiver conectado,
-    # retorna para a página inicial
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect("index")
 
-    # Recebe os dados enviados pelo formulário
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CadastroForm(request.POST)
 
-        # Valida e salva o usuário
         if form.is_valid():
             usuario = form.save()
-
-            # Faz login automaticamente
             login(request, usuario)
-
-            return redirect('index')
-
+            return redirect("index")
     else:
-        # Exibe o formulário vazio
         form = CadastroForm()
 
-    return render(request, 'cadastro.html', {'form': form})
+    return render(request, "cadastro.html", {
+        "form": form
+    })
+
+
+# ==========================================
+# CADASTRAR CLIENTE PELO PAINEL
+# ==========================================
+
+@staff_member_required
+def cadastrar_cliente(request):
+
+    if request.method == "POST":
+        form = ClienteCadastroForm(request.POST)
+
+        if form.is_valid():
+            dados = form.cleaned_data
+
+            with transaction.atomic():
+
+                # Procura a cidade no banco
+                cidade = Cidade.objects.filter(
+                    nome__iexact=dados["cidade_nome"],
+                    uf__iexact=dados["uf"]
+                ).first()
+
+                # Cadastra a cidade, se necessário
+                if cidade is None:
+                    cidade = Cidade.objects.create(
+                        nome=dados["cidade_nome"],
+                        uf=dados["uf"]
+                    )
+
+                # Salva o cliente
+                Cliente.objects.create(
+                    nome=dados["nome"],
+                    cpf=dados["cpf"],
+                    data_nasc=dados["data_nasc"],
+                    email=dados["email"],
+                    telefone=dados["telefone"],
+                    cidade=cidade
+                )
+
+            messages.success(
+                request,
+                "Cliente cadastrado com sucesso!"
+            )
+
+            return redirect("cadastrar_cliente")
+
+    else:
+        form = ClienteCadastroForm()
+
+    return render(request, "cadastrar_cliente.html", {
+        "form": form
+    })
+
+
+# ==========================================
+# REGISTRAR RESERVA PELO PAINEL
+# ==========================================
+
+@staff_member_required
+def reservar(request):
+
+    if request.method == "POST":
+        form = ReservaGerenciamentoForm(request.POST)
+
+        if form.is_valid():
+
+            # Cria a reserva com os dados do formulário
+            reserva = form.save(commit=False)
+
+            # Como o administrador registrou a reserva,
+            # ela já fica confirmada
+            reserva.status = "confirmada"
+
+            # O Model calcula o valor automaticamente
+            reserva.save()
+
+            valor = f"{reserva.valor_total:.2f}".replace(".", ",")
+
+            messages.success(
+                request,
+                f"Reserva nº {reserva.pk} registrada com sucesso! "
+                f"Cliente: {reserva.cliente.nome}. "
+                f"Quadra: {reserva.quadra.nome}. "
+                f"Valor total: R$ {valor}. "
+                f"Situação: Confirmada."
+            )
+
+            return redirect("reservar")
+
+    else:
+        form = ReservaGerenciamentoForm()
+
+    return render(request, "reservar.html", {
+        "form": form
+    })
+
+# CONFIRMAR OU CANCELAR RESERVA
+
+from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_POST
+from django.core.exceptions import ValidationError
+
+
+@staff_member_required
+@require_POST
+def alterar_status_reserva(request, reserva_id, acao):
+
+    # Busca a reserva no banco de dados
+    reserva = get_object_or_404(Reserva, id=reserva_id)
+
+    # Define as ações permitidas
+    if acao == "confirmar":
+        novo_status = "confirmada"
+
+    elif acao == "cancelar":
+        novo_status = "cancelada"
+
+    else:
+        messages.error(request, "Ação inválida.")
+        return redirect("reservas")
+
+    # Se já estiver na situação solicitada
+    if reserva.status == novo_status:
+        messages.info(
+            request,
+            "A reserva já está nessa situação."
+        )
+        return redirect("reservas")
+
+    # Altera a situação
+    reserva.status = novo_status
+
+    # Antes de confirmar, verifica as regras
+    # do Model, incluindo conflitos de horários
+    if novo_status == "confirmada":
+        try:
+            reserva.full_clean()
+
+        except ValidationError:
+            messages.error(
+                request,
+                "Não foi possível confirmar a reserva. "
+                "Verifique os dados e possíveis "
+                "conflitos de horários."
+            )
+            return redirect("reservas")
+
+    # Salva a alteração no PostgreSQL
+    reserva.save(update_fields=["status"])
+
+    messages.success(
+        request,
+        f"Reserva nº {reserva.id} "
+        f"{novo_status} com sucesso!"
+    )
+
+    return redirect("reservas")
