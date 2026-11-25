@@ -1,0 +1,94 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Complexos Esportivos | Gerenciamento de Quadras{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-sm border-0">
+
+    <!-- Cabeçalho -->
+    <div class="card-header text-white"
+         style="background-color: #10291e;">
+
+        <h3 class="mb-0">
+            Complexos Esportivos
+        </h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <p class="text-muted">
+            Consulte os complexos esportivos
+            cadastrados no sistema.
+        </p>
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-bordered">
+
+                <thead style="background-color: #e9f1ec;">
+
+                    <tr>
+                        <th>Nome do Complexo</th>
+                        <th>Endereço</th>
+                        <th>Cidade</th>
+                        <th>Estado</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for complexo in complexos %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ complexo.nome }}</strong>
+                        </td>
+
+                        <td>
+                            {{ complexo.endereco }}
+                        </td>
+
+                        <td>
+                            {{ complexo.cidade.nome }}
+                        </td>
+
+                        <td>
+                            {{ complexo.cidade.uf }}
+                        </td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="4"
+                            class="text-center text-muted p-4">
+
+                            Nenhum complexo esportivo cadastrado.
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <a href="{% url 'index' %}"
+           class="btn btn-outline-success mt-3">
+
+            Voltar ao Painel
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

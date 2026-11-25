@@ -320,3 +320,56 @@ def alterar_status_reserva(request, reserva_id, acao):
     )
 
     return redirect("reservas")
+
+# CADASTRAR COMPLEXO ESPORTIVO PELO SITE
+
+from .forms import ComplexoCadastroForm
+
+@staff_member_required
+def cadastrar_complexo(request):
+
+    if request.method == "POST":
+        form = ComplexoCadastroForm(request.POST)
+
+        if form.is_valid():
+
+            with transaction.atomic():
+
+                # Procura Poços de Caldas no banco
+                cidade = Cidade.objects.filter(
+                    nome__iexact="Poços de Caldas",
+                    uf__iexact="MG"
+                ).first()
+
+                # Se não existir, cadastra a cidade
+                if cidade is None:
+                    cidade = Cidade.objects.create(
+                        nome="Poços de Caldas",
+                        uf="MG"
+                    )
+
+                # Prepara o complexo
+                complexo = form.save(commit=False)
+
+                # Define a cidade automaticamente
+                complexo.cidade = cidade
+
+                # Salva no PostgreSQL
+                complexo.save()
+
+            messages.success(
+                request,
+                "Complexo esportivo cadastrado com sucesso!"
+            )
+
+            return redirect("cadastrar_complexo")
+
+    else:
+        form = ComplexoCadastroForm()
+
+    return render(
+        request,
+        "cadastrar_complexo.html",
+        {"form": form}
+    )
+

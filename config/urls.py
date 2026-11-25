@@ -32,7 +32,14 @@ urlpatterns = [
         name='cadastrar_cliente'
     ),
 
-    # Nova reserva
+    # Cadastrar complexos esportivos
+    path(
+        'complexos/cadastrar/',
+        cadastrar_complexo,
+        name='cadastrar_complexo'
+    ),
+
+    # Registrar reserva
     path(
         'reservar/',
         staff_member_required(reservar),
@@ -47,17 +54,70 @@ urlpatterns = [
     ),
 
     # Consultas
-    path('cidades/', staff_member_required(CidadesView.as_view()), name='cidades'),
-    path('complexos/', staff_member_required(ComplexosView.as_view()), name='complexos'),
-    path('modalidades/', staff_member_required(ModalidadesView.as_view()), name='modalidades'),
-    path('quadras/', staff_member_required(QuadrasView.as_view()), name='quadras'),
-    path('horarios/', staff_member_required(HorariosView.as_view()), name='horarios'),
+    path(
+        'cidades/',
+        staff_member_required(CidadesView.as_view()),
+        name='cidades'
+    ),
+
+    path(
+        'complexos/',
+        staff_member_required(ComplexosView.as_view()),
+        name='complexos'
+    ),
+
+    path(
+        'modalidades/',
+        staff_member_required(ModalidadesView.as_view()),
+        name='modalidades'
+    ),
+
+    path(
+        'quadras/',
+        staff_member_required(QuadrasView.as_view()),
+        name='quadras'
+    ),
+
+    path(
+        'horarios/',
+        staff_member_required(HorariosView.as_view()),
+        name='horarios'
+    ),
 
     # Gerenciamento
-    path('pessoas/', staff_member_required(PessoasView.as_view()), name='pessoas'),
-    path('clientes/', staff_member_required(ClientesView.as_view()), name='clientes'),
-    path('gestores/', staff_member_required(GestoresView.as_view()), name='gestores'),
-    path('reservas/', staff_member_required(ReservasView.as_view()), name='reservas'),
-    path('pagamentos/', staff_member_required(PagamentosView.as_view()), name='pagamentos'),
-    path('avaliacoes/', staff_member_required(AvaliacoesView.as_view()), name='avaliacoes'),
+    path(
+        'pessoas/',
+        staff_member_required(PessoasView.as_view()),
+        name='pessoas'
+    ),
+
+    path(
+        'clientes/',
+        staff_member_required(ClientesView.as_view()),
+        name='clientes'
+    ),
+
+    path(
+        'gestores/',
+        staff_member_required(GestoresView.as_view()),
+        name='gestores'
+    ),
+
+    path(
+        'reservas/',
+        staff_member_required(ReservasView.as_view()),
+        name='reservas'
+    ),
+
+    path(
+        'pagamentos/',
+        staff_member_required(PagamentosView.as_view()),
+        name='pagamentos'
+    ),
+
+    path(
+        'avaliacoes/',
+        staff_member_required(AvaliacoesView.as_view()),
+        name='avaliacoes'
+    ),
 ]
