@@ -1,65 +1,100 @@
 
 {% extends 'base.html' %}
 
-{% block title %}Quadras | Quadras Esportivas{% endblock %}
+{% block title %}Quadras | Gerenciamento de Quadras{% endblock %}
 
 {% block content %}
 
-<h2 class="text-success mb-4">
-    Quadras Esportivas
-</h2>
+<!-- Cabeçalho -->
+<div class="card shadow-sm border-0 mb-4">
 
-<p class="text-muted">
-    Conheça as quadras cadastradas em nosso sistema.
-</p>
+    <div class="card-header text-white"
+         style="background-color: #10291e;">
 
+        <h3 class="mb-0">
+            Quadras Esportivas
+        </h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <p class="text-muted mb-0">
+            Consulte as quadras cadastradas,
+            seus complexos esportivos e valores.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- Lista de quadras -->
 <div class="row">
 
     {% for quadra in quadras %}
 
     <div class="col-md-6 col-lg-4 mb-4">
 
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100 border-0">
 
             <div class="card-body">
 
-                <h4 class="text-success">
+                <!-- Nome da quadra -->
+                <h4 style="color: #10291e;">
                     {{ quadra.nome }}
                 </h4>
 
                 <hr>
 
-                <p>
-                    <strong>Modalidade:</strong>
-                    {{ quadra.modalidade.nome }}
-                </p>
-
+                <!-- Complexo esportivo -->
                 <p>
                     <strong>Complexo:</strong>
                     {{ quadra.complexo_esportivo.nome }}
                 </p>
 
+                <!-- Localização -->
+                <p>
+                    <strong>Cidade:</strong>
+                    {{ quadra.complexo_esportivo.cidade.nome }}
+                    -
+                    {{ quadra.complexo_esportivo.cidade.uf }}
+                </p>
+
+                <!-- Modalidade -->
+                <p>
+                    <strong>Modalidade:</strong>
+                    {{ quadra.modalidade.nome }}
+                </p>
+
+                <!-- Capacidade -->
                 <p>
                     <strong>Capacidade:</strong>
                     {{ quadra.capacidade }} pessoas
                 </p>
 
+                <!-- Valor por hora -->
                 <p>
                     <strong>Valor por hora:</strong>
-                    R$ {{ quadra.valor_hora }}
+                    R$ {{ quadra.valor_hora|floatformat:2 }}
                 </p>
 
+                <!-- Situação -->
                 <p>
                     <strong>Situação:</strong>
 
                     {% if quadra.ativa %}
+
                         <span class="badge badge-success">
                             Ativa
                         </span>
+
                     {% else %}
+
                         <span class="badge badge-secondary">
                             Inativa
                         </span>
+
                     {% endif %}
                 </p>
 
@@ -72,11 +107,24 @@
     {% empty %}
 
     <div class="col-12">
-        <p>Nenhuma quadra cadastrada.</p>
+
+        <div class="alert alert-secondary text-center">
+            Nenhuma quadra cadastrada no sistema.
+        </div>
+
     </div>
 
     {% endfor %}
 
 </div>
+
+
+<!-- Voltar ao painel -->
+<a href="{% url 'index' %}"
+   class="btn btn-outline-success mt-2">
+
+    Voltar ao Painel
+
+</a>
 
 {% endblock %}
