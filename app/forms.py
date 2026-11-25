@@ -5,8 +5,19 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.utils import timezone
 
-from .models import Cidade, Pessoa, Cliente, Reserva, Quadra
+from .models import (
+    Cidade,
+    Pessoa,
+    Cliente,
+    Reserva,
+    Quadra,
+    ComplexoEsportivo,
+)
 
+
+# ==========================================
+# 1. CADASTRO ANTIGO DE USUÁRIOS
+# ==========================================
 
 class CadastroForm(UserCreationForm):
 
@@ -22,7 +33,9 @@ class CadastroForm(UserCreationForm):
 
     data_nasc = forms.DateField(
         label="Data de nascimento",
-        widget=forms.DateInput(attrs={"type": "date"})
+        widget=forms.DateInput(
+            attrs={"type": "date"}
+        )
     )
 
     email = forms.EmailField(
@@ -117,10 +130,9 @@ class CadastroForm(UserCreationForm):
         return usuario
 
 
-
-
-
-
+# ==========================================
+# 2. FORMULÁRIO ANTIGO DE RESERVAS
+# ==========================================
 
 class ReservaForm(forms.ModelForm):
 
@@ -137,7 +149,10 @@ class ReservaForm(forms.ModelForm):
     data_nasc = forms.DateField(
         label="Data de nascimento",
         widget=forms.DateInput(
-            attrs={"type": "date", "class": "form-control"}
+            attrs={
+                "type": "date",
+                "class": "form-control"
+            }
         )
     )
 
@@ -254,6 +269,7 @@ class ReservaForm(forms.ModelForm):
         fim = dados.get("data_hora_fim")
 
         if inicio and fim:
+
             if inicio <= timezone.now():
                 self.add_error(
                     "data_hora_inicio",
@@ -270,9 +286,7 @@ class ReservaForm(forms.ModelForm):
 
 
 # ==========================================
-# NOVO FORMULÁRIO: CADASTRAR CLIENTE
-# Utilizado pelo administrador no próprio site.
-# O cliente NÃO precisa de login ou senha.
+# 3. CADASTRO DE CLIENTES PELO SISTEMA
 # ==========================================
 
 class ClienteCadastroForm(forms.Form):
@@ -398,30 +412,31 @@ class ClienteCadastroForm(forms.Form):
         return cpf_formatado
 
 
-# RESERVA PELO PAINEL ADMINISTRATIVO
+# ==========================================
+# 4. RESERVAS PELO PAINEL ADMINISTRATIVO
+# HORÁRIOS EM FORMATO BRASILEIRO
+# ==========================================
 
 class ReservaGerenciamentoForm(forms.ModelForm):
 
     data_hora_inicio = forms.DateTimeField(
         label="Data e hora de início",
-        input_formats=["%Y-%m-%dT%H:%M"],
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
+        input_formats=["%d/%m/%Y %H:%M"],
+        widget=forms.TextInput(
             attrs={
-                "type": "datetime-local",
-                "class": "form-control"
+                "class": "form-control",
+                "placeholder": "Ex.: 30/11/2026 14:00"
             }
         )
     )
 
     data_hora_fim = forms.DateTimeField(
         label="Data e hora de término",
-        input_formats=["%Y-%m-%dT%H:%M"],
-        widget=forms.DateTimeInput(
-            format="%Y-%m-%dT%H:%M",
+        input_formats=["%d/%m/%Y %H:%M"],
+        widget=forms.TextInput(
             attrs={
-                "type": "datetime-local",
-                "class": "form-control"
+                "class": "form-control",
+                "placeholder": "Ex.: 30/11/2026 15:00"
             }
         )
     )
@@ -440,6 +455,7 @@ class ReservaGerenciamentoForm(forms.ModelForm):
             "cliente": forms.Select(
                 attrs={"class": "form-control"}
             ),
+
             "quadra": forms.Select(
                 attrs={"class": "form-control"}
             )
@@ -448,17 +464,19 @@ class ReservaGerenciamentoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Apenas clientes ativos
+        # Mostra apenas clientes ativos
         self.fields["cliente"].queryset = (
             Cliente.objects.filter(ativo=True)
             .order_by("nome")
         )
 
         self.fields["cliente"].label_from_instance = (
-            lambda cliente: f"{cliente.nome} - {cliente.cpf}"
+            lambda cliente: (
+                f"{cliente.nome} - {cliente.cpf}"
+            )
         )
 
-        # Apenas quadras ativas
+        # Mostra apenas quadras ativas
         self.fields["quadra"].queryset = (
             Quadra.objects.filter(ativa=True)
             .select_related(
@@ -499,4 +517,39 @@ class ReservaGerenciamentoForm(forms.ModelForm):
             )
 
         return dados
-   
+
+
+# ==========================================
+# 5. CADASTRO DE COMPLEXOS ESPORTIVOS
+# ==========================================
+
+class ComplexoCadastroForm(forms.ModelForm):
+
+    class Meta:
+        model = ComplexoEsportivo
+
+        fields = [
+            "nome",
+            "endereco"
+        ]
+
+        labels = {
+            "nome": "Nome do complexo",
+            "endereco": "Endereço do complexo"
+        }
+
+        widgets = {
+            "nome": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Nome do complexo"
+                }
+            ),
+
+            "endereco": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Rua, número e bairro"
+                }
+            )
+        }
